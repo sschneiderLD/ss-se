@@ -1,6 +1,6 @@
-# LaunchDarkly Feature Flag Demo
+# SE Demo Submission
 
-A full-stack demo application for showcasing LaunchDarkly feature flags, built for Sales Engineer demos.
+A full-stack demo application for showcasing LaunchDarkly feature flags, targeting, and control.
 
 ## Prerequisites
 
