@@ -5,7 +5,7 @@ A full-stack demo application for showcasing LaunchDarkly feature flags, built f
 ## Prerequisites
 
 - Node.js 18+
-- A LaunchDarkly account ([free trial](https://app.launchdarkly.com/signup) or [demo sandbox](https://demo.app.launchdarkly.com/))
+- A LaunchDarkly account
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ Follow these steps to configure LaunchDarkly for this demo.
 
 ### 1. Get Your Keys
 
-1. Log in to [LaunchDarkly](https://app.launchdarkly.com) or use the [demo sandbox](https://demo.app.launchdarkly.com/).
+1. Log in to [LaunchDarkly](https://app.launchdarkly.com).
 2. Open your project (or create one) and select an environment (e.g. **Test** or **Production**).
 3. Go to **Project settings** (gear icon in the left sidebar) → **Environments**.
 4. Click the **⋮** overflow menu for your environment.
@@ -57,8 +57,8 @@ Create four flags in your project. Navigate to **Feature flags** and click **Cre
 2. **Key:** `new-dashboard-section` (auto-filled from name)  
 3. **Type:** Boolean  
 4. Enable **SDKs using Client-side ID** (for frontend).  
-5. **Default:** Off  
-6. Save. Toggle it **On** under "Targeting" to turn the feature on for everyone.
+5. **Flag State:** Off
+7. Save. Toggle it **On** under "Targeting" to turn the feature on for everyone.
 
 #### Flag 2: `premium-feature` (Rule-based targeting)
 
@@ -66,9 +66,10 @@ Create four flags in your project. Navigate to **Feature flags** and click **Cre
 2. **Key:** `premium-feature`  
 3. **Type:** Boolean  
 4. Enable **SDKs using Client-side ID**.  
-5. **Default:** Off  
-6. Under **Targeting**, add a rule: **If** `plan` **is one of** `premium` → **Then** serve `true`.  
-7. Save.
+5. **Flag State:** On
+6. **Default:** serve "false"  
+7. Under **Targeting**, add a custom rule: **If** `plan` **is one of** `premium` → **Then** serve `true`.  
+8. Save.
 
 #### Flag 3: `signup-button-variant` (A/B variation)
 
@@ -77,19 +78,22 @@ Create four flags in your project. Navigate to **Feature flags** and click **Cre
 3. **Type:** String  
 4. Add variations: `primary` and `secondary` (default: `primary`).  
 5. Enable **SDKs using Client-side ID**.  
-6. Under **Targeting**, use a percentage rollout (e.g. 50% each) or serve a single variation.  
-7. Save.
+6. Under **Targeting**, use a percentage rollout (e.g. 50% each) or serve a single variation.
+7. **Optional** Under **Targeting**, add a custom rule: **If** 'role' **is one of** 'admin' → **Then** serve `secondary`. This allows admins to force seeing the new version of the button.
+8. 7. **Optional** Under **Targeting**, select **Target Individuals**, then search for "debug", **Then** serve `secondary`. This allows debug users to force seeing the new version of the button.
+9. Save.
 
 #### Flag 4: `api-integration-kill-switch` (Server-side kill switch)
 
-1. **Name:** API Integration Kill Switch  
+1. **Name:** Update to new API version  
 2. **Key:** `api-integration-kill-switch`  
 3. **Type:** Boolean  
-4. Leave **SDKs using Client-side ID** off — this flag is evaluated server-side only.  
-5. **Default:** On (integration enabled). Toggle **Off** to disable.  
-6. Save.
+4. Leave **SDKs using Client-side ID** off — this flag is evaluated server-side only.
+5. Go to the **Variations** tab, update the **true** variaition name to **V2**, update the **false** variation name to **V1**.
+6. **Default:** On, with "V1" selected. 
+7. Save.
 
-The **Your Account Details** section displays account fields (Account Name, Email, Plan). When the flag is **On**, values show as `ERROR` in red; when **Off**, static values appear. A **Trigger Kill Switch** button appears when the flag is true and turns the flag off via the LaunchDarkly API when clicked.
+The **Your Account Details** section displays account fields (Account Name, Email, Plan). When the flag is **On** with **V2**, values show as `ERROR` in red; when **V1**, static values appear. A **Trigger Kill Switch** button appears when the flag is serving V2 and turns the flag off via the LaunchDarkly API when clicked.
 
 ### 3. Create Experimentation Metric (Optional)
 
@@ -115,7 +119,7 @@ Use this metric in an experiment tied to `signup-button-variant` to compare vari
 1. **Release flag** – Toggle `new-dashboard-section` on/off in LaunchDarkly to show or hide the new section (no redeploy).
 2. **User targeting** – Use the switcher to toggle between Free and Premium contexts. The `premium-feature` content only appears for Premium.
 3. **A/B variation** – The signup button text and style change based on `signup-button-variant`. Click the button to send a metric event (value 3 for "Sign up", 10 for "Get started") for experimentation.
-4. **Kill switch** – The **Your Account Details** section shows account fields. When the flag is on, values display as `ERROR` in red. Click **Trigger Kill Switch** to turn the flag off and restore normal values. The backend evaluates the flag server-side; switch contexts to see per-user evaluation.
+4. **Kill switch** – The **Your Account Details** section shows account fields. When the flag is on and set to V2, values display as `ERROR` in red. Click **Trigger Kill Switch** to turn the flag off and restore normal values. Then turn the flag back on and set to a default value of V1, add a custom rule targeting **debug** is **true**, and serve V2. This allows a developer to see the error live in production while not impacting other users.
 
 ## Project Structure
 
